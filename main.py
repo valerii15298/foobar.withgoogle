@@ -25,7 +25,16 @@ def SieveOfEratosthenes(n):
 
 
 def solution(i):
+    limit = 1000
+    sieve = [False] * limit
+    
     pass
 
 
-solution(100)
+a = [False] * 10
+
+print a
+
+a[0] = True
+
+print a
