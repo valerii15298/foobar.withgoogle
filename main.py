@@ -50,41 +50,6 @@
 # print solution(17, 4)
 # # print solution(200000, 25000)
 # # 829043456
-#
-#
-# def answer(start, length):
-#     worker_list = [(start + (length - l) * length, start + (length - l) * length + l) for l in range(length, 0, -1)]
-#
-#     def getXOR(start, end):
-#         if (end - start) == 0:
-#             return 0
-#         if (end - start) == 1:
-#             return start
-#         if (end - start) <= 4:
-#             return reduce(lambda x, y: x ^ y, range(start, end))
-#         else:
-#             # if (start / 4 * 4 + 4) != (start + 4):
-#             #     print start
-#             begin_range = (start, start / 4 * 4 + 4)
-#             end_range = (end / 4 * 4, end)
-#             if (end / 4 * 4) != end:
-#                 print end, (end / 4 * 4)
-#             return getXOR(*begin_range) ^ getXOR(*end_range)
-#
-#     new_xor = [getXOR(start, end) for start, end in worker_list]
-#
-#     return reduce(lambda x, y: x ^ y, new_xor)
 
 
-# print(answer(0, 3))
-# print(answer(17, 4))
-# print(answer(200000, 25000))
-
-# max_n = 10000
-# for id in range(max_n):
-#     for length in range(1, max_n - id + 1):
-#         if (solution(id, length) != answer(id, length)):
-#             print "BAD: ", id, length
-#             exit(-1)
-#     print "Success: ", id
-
+# [[0, 1, 2, 3, 4, 5], [0, 1, 2, 6, 7, 8], [0, 3, 4, 6, 7, 9], [1, 3, 5, 6, 8, 9], [2, 4, 5, 7, 8, 9]]
