@@ -1,55 +1,28 @@
-# def solution(L):
-#     arrays = [[], [], []]
-#     for i in L:
-#         arrays[i % 3].append(i)
-#
-#     arr1rem = len(arrays[1]) % 3
-#     arrays[0] += arrays[1][:len(arrays[1]) - arr1rem]
-#     del arrays[1][:len(arrays[1]) - arr1rem]
-#
-#     arr2rem = len(arrays[2]) % 3
-#     arrays[0] += arrays[2][:len(arrays[2]) - arr2rem]
-#     del arrays[2][:len(arrays[2]) - arr2rem]
-#
-#     arr_rem = min(arr1rem, arr2rem)
-#     if arr_rem != 0:
-#         arrays[0] += arrays[1][-arr_rem:] + arrays[2][-arr_rem:]
-#
-#     return int(''.join(map(str, reversed(sorted(arrays[0])))))
-#
-#
-# print solution([3, 1, 4, 1])
+def solution(dimensions, your_position, guard_position, distance):
+    my_mirrors = []
+    guard_mirrors = []
+    x_room, y_room = dimensions
+    x_my, y_my = your_position
+    x_guard, y_guard = guard_position
+
+    my_left = -2 * x_my
+    my_right = 2 * (x_room - x_my)
+    my_down = -2 * y_my
+    my_up = 2 * (y_room - y_my)
+
+    guard_left = -2 * x_guard
+    guard_right = 2 * (x_room - x_guard)
+    guard_down = -2 * y_guard
+    guard_up = 2 * (y_room - y_guard)
+
+    def do_mirror(arr_coordinates, sides):
+        new_dots = set()
+        for x, y in arr_coordinates:
+            new_dots.add((x + sides[0], y))
+            new_dots.add((x + sides[1], y))
+            new_dots.add((x, y + sides[2]))
+            new_dots.add((x, y + sides[3]))
+        return new_dots
 
 
-# def solution(start, length):
-#     def xorsum(n):
-#         if n == 0:
-#             return 0
-#
-#         if (n - 1) % 4 == 0:
-#             return n - 1
-#         elif (n - 1) % 4 == 1:
-#             return 1
-#         elif (n - 1) % 4 == 2:
-#             return n
-#         else:
-#             return 0
-#
-#     checksum = 0
-#     cur = start
-#     cur_len = length
-#     while cur_len > 0:
-#         checksum ^= xorsum(cur) ^ xorsum(cur + cur_len)
-#         cur += length
-#         cur_len -= 1
-#
-#     return checksum
-#
-#
-# print solution(0, 3)
-# print solution(17, 4)
-# # print solution(200000, 25000)
-# # 829043456
-
-
-# [[0, 1, 2, 3, 4, 5], [0, 1, 2, 6, 7, 8], [0, 3, 4, 6, 7, 9], [1, 3, 5, 6, 8, 9], [2, 4, 5, 7, 8, 9]]
+solution([3, 2], [1, 1], [2, 1], 4)
