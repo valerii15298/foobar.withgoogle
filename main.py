@@ -1,67 +1,41 @@
-import math
+from itertools import product
 
 
 def solution(dimensions, my_position, guard_position, distance):
-    x_room, y_room = dimensions
+    def gen_list(length, shift, pos):
+        end = length + distance + 1
+        step = 2 * length
+        result1 = set(range(pos, end, step)).union(range(pos + 2 * (length - shift), end, step))
+        result2 = set(range(pos, -end, -step)).union(range(pos - 2 * shift, -end, -step))
+        return result1.union(result2)
 
-    x_count_mirrors = int(math.ceil(float(distance) / x_room)) + 3
-    y_count_mirrors = int(math.ceil(float(distance) / y_room)) + 3
+    def get_list(shifts, position):
+        x_list = gen_list(dimensions[0], shifts[0], position[0])
+        y_list = gen_list(dimensions[1], shifts[1], position[1])
+        return set(product(x_list, y_list))
+
+    my_mirrors = get_list(my_position, (0, 0))
+
+    guard_shifts = guard_position[:]
+    guard_position = (guard_position[0] - my_position[0], guard_position[1] - my_position[1])
+
+    guard_mirrors = get_list(guard_shifts, guard_position)
+
+    corners = get_list((0, 0), (- my_position[0], - my_position[1]))
+
     distance = distance ** 2
 
-    def get_mirrors(position):
-        x_mirrors = set()
-        y_mirrors = set()
+    def get_distance(pos):
+        return pos[0] ** 2 + pos[1] ** 2
 
-        x, y = position
-
-        left, right = 2 * x, 2 * (x_room - x)
-        x_left, x_right = x, x
-        for i in range(x_count_mirrors):
-            x_mirrors.add((x_left, y))
-            x_mirrors.add((x_right, y))
-            x_left -= left
-            x_right += right
-            left, right = right, left
-
-        # print list(x_mirrors)
-
-        for x_pos, y_pos in x_mirrors:
-            down, up = 2 * y, 2 * (y_room - y)
-            y_down, y_up = y, y
-            for i in range(y_count_mirrors):
-                y_mirrors.add((x_pos, y_down))
-                y_mirrors.add((x_pos, y_up))
-                y_down -= down
-                y_up += up
-                down, up = up, down
-
-        # print list(y_mirrors)
-
-        return x_mirrors.union(y_mirrors)
-
-    my_mirrors = get_mirrors(my_position)
-    guard_mirrors = get_mirrors(guard_position)
-
-    corners = set()
-    for i in range(x_count_mirrors):
-        for j in range(y_count_mirrors):
-            w, h = i * x_room, j * y_room
-            corners.add((w, h))
-            corners.add((-w, h))
-            corners.add((w, -h))
-            corners.add((-w, -h))
-
-    def get_distance(pos1, pos2):
-        return (pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2
-
-    def is_between(a, b, c):
-        crossproduct = (c[1] - a[1]) * (b[0] - a[0]) - (c[0] - a[0]) * (b[1] - a[1])
-        if abs(crossproduct) != 0:
+    def is_between(b, c):
+        cross = c[1] * b[0] - c[0] * b[1]
+        if cross != 0:
             return False
 
-        hypo = (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2
+        hypo = b[0] ** 2 + b[1] ** 2
 
-        dot_product = (c[0] - a[0]) * (b[0] - a[0]) + (c[1] - a[1]) * (b[1] - a[1])
+        dot_product = c[0] * b[0] + c[1] * b[1]
         if dot_product < 0:
             return False
 
@@ -71,11 +45,11 @@ def solution(dimensions, my_position, guard_position, distance):
         return True
 
     def check(g_pos):
-        if get_distance(my_position, g_pos) > distance:
+        if get_distance(g_pos) > distance:
             return False
 
         for pos in (my_mirrors.union(guard_mirrors)).union(corners):
-            if list(pos) not in (list(g_pos), my_position) and is_between(my_position, g_pos, pos):
+            if pos not in (g_pos, (0, 0)) and is_between(g_pos, pos):
                 return False
 
         return True
@@ -86,18 +60,19 @@ def solution(dimensions, my_position, guard_position, distance):
             result_count += 1
             # print guard_pos
 
-    if (tuple(guard_position) in corners) and (get_distance(my_position, guard_position) <= distance):
+    if (guard_position in corners) and (get_distance(guard_position) <= distance):
         result_count += 1
 
     return result_count
 
 
 tests = [
+    ([3, 3], [1, 1], [2, 1], 10),
     ([3, 2], [1, 1], [2, 1], 4),
     ([300, 275], [150, 150], [185, 100], 500),
     ([300, 275], [150, 150], [185, 100], 500)
 ]
-res = solution(*tests[0])
+res = solution(*tests[2])
 print res
 
 # def test():
