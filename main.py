@@ -86,11 +86,15 @@ def solution(dimensions, my_position, guard_position, distance):
             result_count += 1
             # print guard_pos
 
+    if (tuple(guard_position) in corners) and (get_distance(my_position, guard_position) <= distance):
+        result_count += 1
+
     return result_count
 
 
 tests = [
     ([3, 2], [1, 1], [2, 1], 4),
+    ([300, 275], [150, 150], [185, 100], 500),
     ([300, 275], [150, 150], [185, 100], 500)
 ]
 res = solution(*tests[0])
