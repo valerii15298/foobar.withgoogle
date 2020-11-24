@@ -47,7 +47,7 @@ def solution(dimensions, my_position, guard_position, distance):
     def get_distance(pos1, pos2):
         return (pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2
 
-    def is_between(b, c):
+    def is_on_line(b, c):
         distance = 25
 
         crossproduct = c[1] * b[0] - c[0] * b[1]
@@ -67,15 +67,16 @@ def solution(dimensions, my_position, guard_position, distance):
             hypo = bx2 + by2
             assert hypo == distance
 
-            if (c[0] * bx + c[1] * by) < 0:
+            k0 = (c[0] ** 2) * bx2 * (1 if b[0] * c[0] >= 0 else -1)
+            k1 = (c[1] ** 2) * by2 * (1 if b[1] * c[1] >= 0 else -1)
+
+            if (k0 + k1) < 0:
                 return False
 
-            c = list(c)
-            c[0] = c[0] ** 2
-            c[1] = c[1] ** 2
+            k0, k1 = abs(k0), abs(k1)
 
-            l = ((c[0] * bx2) + (c[1] * by2) - (hypo ** 2)) ** 2
-            r = 4 * c[0] * c[1] * bx2 * by2
+            l = (k0 + k1 - (hypo ** 2)) ** 2
+            r = 4 * k0 * k1
 
             if l < r:
                 return False
@@ -90,21 +91,22 @@ def solution(dimensions, my_position, guard_position, distance):
 
         return True
 
-    r = is_between((1, 1), (2, 2))
+    r = is_on_line((6, 8), (0.1, 0.2))
     print r
-    return 0
 
-    def check(pos1, pos2):
-        if get_distance(pos1, pos2) > distance:
+    # return 0
+
+    def check(pos):
+        if (pos[0] ** 2 + pos[1] ** 2) > distance:
             return False
         for my_pos in my_mirrors:
-            if is_between(pos1, pos2, my_pos):
+            if is_on_line(pos, my_pos):
                 return False
         return True
 
     result_count = 0
     for guard_pos in guard_mirrors:
-        if check(my_position, guard_position):
+        if check(guard_pos):
             result_count += 1
 
     return result_count
