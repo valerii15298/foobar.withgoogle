@@ -88,24 +88,3 @@ def solution(dimensions, my_position, guard_position, distance):
 
     return result_count
 
-
-tests = [
-    ([3, 2], [1, 1], [2, 1], 4),
-    ([300, 275], [150, 150], [185, 100], 500)
-]
-res = solution(*tests[0])
-print res
-
-# def test():
-#     for i in range(100):
-#         x_room = random.randint()
-#
-# (415, -100)
-# (-185, -100)
-# (-185, 450)
-# (415, 450)
-#
-#
-# (415, -250)
-# (415, 300)
-# (-185, 300)
