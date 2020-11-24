@@ -1,28 +1,48 @@
+import math
+
+
+
 def solution(dimensions, your_position, guard_position, distance):
-    my_mirrors = []
-    guard_mirrors = []
     x_room, y_room = dimensions
-    x_my, y_my = your_position
-    x_guard, y_guard = guard_position
 
-    my_left = -2 * x_my
-    my_right = 2 * (x_room - x_my)
-    my_down = -2 * y_my
-    my_up = 2 * (y_room - y_my)
+    x_count_mirrors = int(math.ceil(float(distance) / x_room))
+    y_count_mirrors = int(math.ceil(float(distance) / y_room))
 
-    guard_left = -2 * x_guard
-    guard_right = 2 * (x_room - x_guard)
-    guard_down = -2 * y_guard
-    guard_up = 2 * (y_room - y_guard)
+    def get_mirrors(position):
+        x_mirrors = set()
+        y_mirrors = set()
+        x, y = position
+        left = 2 * x
+        right = 2 * (x_room - x)
+        x_left, x_right = x, x
+        for i in range(x_count_mirrors):
+            x_left -= left
+            x_right += right
+            x_mirrors.add((x_left, y))
+            x_mirrors.add((x_right, y))
+            left, right = right, left
 
-    def do_mirror(arr_coordinates, sides):
-        new_dots = set()
-        for x, y in arr_coordinates:
-            new_dots.add((x + sides[0], y))
-            new_dots.add((x + sides[1], y))
-            new_dots.add((x, y + sides[2]))
-            new_dots.add((x, y + sides[3]))
-        return new_dots
+        # print list(x_mirrors)
 
+        down = 2 * y
+        up = 2 * (y_room - y)
 
-solution([3, 2], [1, 1], [2, 1], 4)
+        for x_pos, y_pos in x_mirrors:
+            y_down, y_up = y, y
+            for i in range(y_count_mirrors):
+                y_down -= down
+                y_up += up
+                y_mirrors.add((x_pos, y_down))
+                y_mirrors.add((x_pos, y_up))
+                y_down, y_up = y_up, y_down
+
+        # print list(y_mirrors)
+
+        return x_mirrors.union(y_mirrors)
+
+    my_mirrors = get_mirrors(your_position)
+    guard_mirrors = get_mirrors(guard_position)
+
+    return 1
+
+solution([5, 3], [1, 1], [2, 1], 6)
