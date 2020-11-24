@@ -3,11 +3,12 @@ from fractions import Fraction as f
 
 
 def solution(dimensions, my_position, guard_position, distance):
-    distance = distance ** 2
     x_room, y_room = dimensions
 
     x_count_mirrors = int(math.ceil(float(distance) / x_room))
     y_count_mirrors = int(math.ceil(float(distance) / y_room))
+    print x_count_mirrors, y_count_mirrors
+    distance = distance ** 2
 
     def get_mirrors(position):
         x_mirrors = set()
@@ -47,73 +48,43 @@ def solution(dimensions, my_position, guard_position, distance):
     def get_distance(pos1, pos2):
         return (pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2
 
-    def is_on_line(b, c):
-        distance = 25
-
-        crossproduct = c[1] * b[0] - c[0] * b[1]
+    def is_between(a, b, c):
+        crossproduct = (c[1] - a[1]) * (b[0] - a[0]) - (c[0] - a[0]) * (b[1] - a[1])
         if abs(crossproduct) != 0:
             return False
 
-        hypo = b[0] ** 2 + b[1] ** 2
+        hypo = (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2
 
-        if hypo < distance:
-            k = f(b[0], b[1]) ** 2
-            bx2 = f(distance, (1 / k) + 1)
-            by2 = f(distance, k + 1)
+        dot_product = (c[0] - a[0]) * (b[0] - a[0]) + (c[1] - a[1]) * (b[1] - a[1])
+        if dot_product < 0:
+            return False
 
-            bx = math.sqrt(bx2) * (1 if b[0] >= 0 else -1)
-            by = math.sqrt(by2) * (1 if b[1] >= 0 else -1)
-
-            hypo = bx2 + by2
-            assert hypo == distance
-
-            k0 = (c[0] ** 2) * bx2 * (1 if b[0] * c[0] >= 0 else -1)
-            k1 = (c[1] ** 2) * by2 * (1 if b[1] * c[1] >= 0 else -1)
-
-            if (k0 + k1) < 0:
-                return False
-
-            k0, k1 = abs(k0), abs(k1)
-
-            l = (k0 + k1 - (hypo ** 2)) ** 2
-            r = 4 * k0 * k1
-
-            if l < r:
-                return False
-
-        else:
-            dot_product = c[0] * b[0] + c[1] * b[1]
-            if dot_product < 0:
-                return False
-
-            if dot_product > hypo:
-                return False
+        if dot_product > hypo:
+            return False
 
         return True
 
-    r = is_on_line((6, 8), (0.1, 0.2))
-    print r
-
-    # return 0
-
-    def check(pos):
-        if (pos[0] ** 2 + pos[1] ** 2) > distance:
+    def check(g_pos):
+        if get_distance(my_position, g_pos) > distance:
             return False
-        for my_pos in my_mirrors:
-            if is_on_line(pos, my_pos):
+
+        for pos in my_mirrors.union(guard_mirrors):
+            if (list(pos) not in (my_position, guard_position)) and is_between(my_position, g_pos, pos):
                 return False
+
         return True
 
     result_count = 0
     for guard_pos in guard_mirrors:
         if check(guard_pos):
             result_count += 1
+            print guard_pos
 
     return result_count
 
 
 res = solution([3, 2], [1, 1], [2, 1], 4)
-# print res
+print res
 
 # x1, y1 = (3.0, 4.0)
 # x2, y2 = (6.0, 8.0)
