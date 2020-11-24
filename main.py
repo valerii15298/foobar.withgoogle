@@ -7,7 +7,6 @@ def solution(dimensions, my_position, guard_position, distance):
 
     x_count_mirrors = int(math.ceil(float(distance) / x_room))
     y_count_mirrors = int(math.ceil(float(distance) / y_room))
-    print x_count_mirrors, y_count_mirrors
     distance = distance ** 2
 
     def get_mirrors(position):
@@ -18,10 +17,10 @@ def solution(dimensions, my_position, guard_position, distance):
         right = 2 * (x_room - x)
         x_left, x_right = x, x
         for i in range(x_count_mirrors):
-            x_left -= left
-            x_right += right
             x_mirrors.add((x_left, y))
             x_mirrors.add((x_right, y))
+            x_left -= left
+            x_right += right
             left, right = right, left
 
         # print list(x_mirrors)
@@ -36,7 +35,7 @@ def solution(dimensions, my_position, guard_position, distance):
                 y_up += up
                 y_mirrors.add((x_pos, y_down))
                 y_mirrors.add((x_pos, y_up))
-                y_down, y_up = y_up, y_down
+                down, up = up, down
 
         # print list(y_mirrors)
 
@@ -69,7 +68,7 @@ def solution(dimensions, my_position, guard_position, distance):
             return False
 
         for pos in my_mirrors.union(guard_mirrors):
-            if (list(pos) not in (my_position, guard_position)) and is_between(my_position, g_pos, pos):
+            if list(pos) not in (list(g_pos), my_position) and is_between(my_position, g_pos, pos):
                 return False
 
         return True
@@ -78,19 +77,10 @@ def solution(dimensions, my_position, guard_position, distance):
     for guard_pos in guard_mirrors:
         if check(guard_pos):
             result_count += 1
-            print guard_pos
+            # print guard_pos
 
     return result_count
 
 
 res = solution([3, 2], [1, 1], [2, 1], 4)
 print res
-
-# x1, y1 = (3.0, 4.0)
-# x2, y2 = (6.0, 8.0)
-# d = 15.0
-#
-#
-# y3 = d ** 2 / (((y2 - y1) / (x2 - x1)) ** 2 + 1)
-#
-# print y3
