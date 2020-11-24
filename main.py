@@ -1,8 +1,7 @@
 import math
 
 
-
-def solution(dimensions, your_position, guard_position, distance):
+def solution(dimensions, my_position, guard_position, distance):
     x_room, y_room = dimensions
 
     x_count_mirrors = int(math.ceil(float(distance) / x_room))
@@ -40,9 +39,23 @@ def solution(dimensions, your_position, guard_position, distance):
 
         return x_mirrors.union(y_mirrors)
 
-    my_mirrors = get_mirrors(your_position)
+    my_mirrors = get_mirrors(my_position)
     guard_mirrors = get_mirrors(guard_position)
 
+    def get_distance(pos1, pos2):
+        return 1
+
+    def check(pos1, pos2):
+        if get_distance(pos1, pos2) > distance:
+            return False
+
+
+    result_count = 0
+    for guard_pos in guard_mirrors:
+        if check(my_position, guard_position):
+            result_count += 1
+
     return 1
+
 
 solution([5, 3], [1, 1], [2, 1], 6)
