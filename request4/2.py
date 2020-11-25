@@ -1,90 +1,59 @@
-import math
+import itertools
+import fractions
 
 
 def solution(dimensions, my_position, guard_position, distance):
-    x_room, y_room = dimensions
+    def gen_list(length, shift, pos):
+        end = length + distance + 1
+        step = 2 * length
+        up = set(range(pos, end, step)).union(range(pos + 2 * (length - shift), end, step))
+        down = set(range(pos, -end, -step)).union(range(pos - 2 * shift, -end, -step))
+        return up | down
 
-    x_count_mirrors = int(math.ceil(float(distance) / x_room)) + 3
-    y_count_mirrors = int(math.ceil(float(distance) / y_room)) + 3
-    distance = distance ** 2
+    def get_list(shifts, position):
+        x_list = gen_list(dimensions[0], shifts[0], position[0])
+        y_list = gen_list(dimensions[1], shifts[1], position[1])
+        mirrors = {}
+        distance2 = distance ** 2
+        for pos in itertools.product(x_list, y_list):
+            hypo = pos[0] ** 2 + pos[1] ** 2
+            if hypo <= distance2:
+                mirrors[pos] = hypo
+        return mirrors
 
-    def get_mirrors(position):
-        x_mirrors = set()
-        y_mirrors = set()
+    my_mirrors = get_list(my_position, (0, 0))
+    guard_mirrors = get_list(guard_position, (guard_position[0] - my_position[0], guard_position[1] - my_position[1]))
+    corners = get_list((0, 0), (- my_position[0], - my_position[1]))
 
-        x, y = position
+    dots = {}
+    dots.update(my_mirrors)
+    dots.update(guard_mirrors)
+    dots.update(corners)
+    dots = map(lambda x: x[0], sorted(dots.items(), key=lambda item: item[1]))
 
-        left, right = 2 * x, 2 * (x_room - x)
-        x_left, x_right = x, x
-        for i in range(x_count_mirrors):
-            x_mirrors.add((x_left, y))
-            x_mirrors.add((x_right, y))
-            x_left -= left
-            x_right += right
-            left, right = right, left
-
-        # print list(x_mirrors)
-
-        for x_pos, y_pos in x_mirrors:
-            down, up = 2 * y, 2 * (y_room - y)
-            y_down, y_up = y, y
-            for i in range(y_count_mirrors):
-                y_mirrors.add((x_pos, y_down))
-                y_mirrors.add((x_pos, y_up))
-                y_down -= down
-                y_up += up
-                down, up = up, down
-
-        # print list(y_mirrors)
-
-        return x_mirrors.union(y_mirrors)
-
-    my_mirrors = get_mirrors(my_position)
-    guard_mirrors = get_mirrors(guard_position)
-
-    corners = set()
-    for i in range(x_count_mirrors):
-        for j in range(y_count_mirrors):
-            w, h = i * x_room, j * y_room
-            corners.add((w, h))
-            corners.add((-w, h))
-            corners.add((w, -h))
-            corners.add((-w, -h))
-
-    def get_distance(pos1, pos2):
-        return (pos1[0] - pos2[0]) ** 2 + (pos1[1] - pos2[1]) ** 2
-
-    def is_between(a, b, c):
-        crossproduct = (c[1] - a[1]) * (b[0] - a[0]) - (c[0] - a[0]) * (b[1] - a[1])
-        if abs(crossproduct) != 0:
-            return False
-
-        hypo = (b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2
-
-        dot_product = (c[0] - a[0]) * (b[0] - a[0]) + (c[1] - a[1]) * (b[1] - a[1])
-        if dot_product < 0:
-            return False
-
-        if dot_product > hypo:
-            return False
-
-        return True
-
-    def check(g_pos):
-        if get_distance(my_position, g_pos) > distance:
-            return False
-
-        for pos in (my_mirrors.union(guard_mirrors)).union(corners):
-            if list(pos) not in (list(g_pos), my_position) and is_between(my_position, g_pos, pos):
-                return False
-
-        return True
-
+    guards = set(guard_mirrors)
     result_count = 0
-    for guard_pos in guard_mirrors:
-        if check(guard_pos):
+
+    visited = set()
+    for dot in dots:
+        gcd = max(fractions.gcd(abs(dot[0]), abs(dot[1])), 1)
+        angle = (dot[0] / gcd, dot[1] / gcd)
+        if dot in guards and angle not in visited:
             result_count += 1
-            # print guard_pos
+        visited.add(angle)
 
     return result_count
 
+
+# tests = {
+#     ((3, 2), (1, 1), (2, 1), 4): 7,
+#     ((300, 275), (150, 150), (185, 100), 500): 9,
+#     ((300, 200), (100, 100), (200, 100), 10000): 3995,
+#     ((30, 20), (10, 10), (20, 10), 10000): 397845,
+# }
+#
+# for test, result in tests.items():
+#     if solution(*test) != result:
+#         print 'Test not passed!'
+#     else:
+#         print 'Test passed!'
