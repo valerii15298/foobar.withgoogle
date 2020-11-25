@@ -127,4 +127,5 @@ def answer(dimensions, captain, badguy, distance):
     # print
     # print translate(tx, ty,make_mat(cap_x, cap_y))
 
-print answer([3000, 2000], [1000, 1000], [2000, 1000], 10000)
+
+print answer([30, 20], [10, 10], [20, 10], 10000)
