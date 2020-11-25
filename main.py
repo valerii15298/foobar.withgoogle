@@ -1,4 +1,5 @@
 from itertools import product
+import fractions
 
 
 def solution(dimensions, my_position, guard_position, distance):
@@ -22,6 +23,10 @@ def solution(dimensions, my_position, guard_position, distance):
     guard_mirrors = get_list(guard_shifts, guard_position)
 
     corners = get_list((0, 0), (- my_position[0], - my_position[1]))
+
+    def store(x, y, visited):
+        gcd = fractions.gcd(abs(x), abs(y))
+        visited.add((x/gcd, y/gcd))
 
     distance = distance ** 2
 
@@ -70,9 +75,9 @@ tests = [
     ([3, 3], [1, 1], [2, 1], 10),
     ([3, 2], [1, 1], [2, 1], 4),
     ([300, 275], [150, 150], [185, 100], 500),
-    ([300, 275], [150, 150], [185, 100], 500)
+    ([3, 2], [1, 1], [2, 1], 10000)
 ]
-res = solution(*tests[2])
+res = solution([300, 200], [100, 100], [200, 100], 10000)
 print res
 
 # def test():
