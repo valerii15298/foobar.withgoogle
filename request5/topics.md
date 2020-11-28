@@ -26,3 +26,5 @@ An article that has a formula to compute the cycle index polynomial of a group t
 
 After using the formulas you get the expression at the end of https://franklinvp.github.io/2020-06-05-PolyaFooBar/
 Then it is just a matter of computing that sum with all those factorials, greater common divisors, and partitions of a number.
+
+[StackOverflow explaining](https://stackoverflow.com/questions/61689832/disorderly-escape-google-foobar-2020-not-passing-test-cases)
